@@ -6,111 +6,52 @@
     <title>geoAltyn - Басты бет</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Базалық стильдер және Telegram түстеріне бейімделу */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #f4f6f9); /* Телеграм фоны */
-            color: var(--tg-theme-text-color, #222222); /* Телеграм мәтін түсі */
+            background-color: var(--tg-theme-bg-color, #f4f6f9);
+            color: var(--tg-theme-text-color, #222222);
             margin: 0;
             padding: 20px;
             transition: background-color 0.3s, color 0.3s;
         }
         
-        /* Жоғарғы бөлік: Профиль және Прогресс */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .greeting h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .greeting p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            color: var(--tg-theme-hint-color, #888888);
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .greeting h1 { margin: 0; font-size: 24px; }
+        .greeting p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #888888); }
         .progress-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            /* 15% көк түспен толтырылған прогресс шеңбері */
+            width: 60px; height: 60px; border-radius: 50%;
             background: conic-gradient(#0072ff 15%, #e0e0e0 0); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 14px;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 14px;
         }
         .progress-inner {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            width: 50px; height: 50px; border-radius: 50%;
             background-color: var(--tg-theme-bg-color, #ffffff);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* Ортаңғы бөлік: Оқуды жалғастыру карточкасы */
         .main-card {
-            background: linear-gradient(135deg, #00c6ff, #0072ff); /* Мұхит көк градиенті */
-            border-radius: 20px;
-            padding: 25px;
-            color: white;
-            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            border-radius: 20px; padding: 25px; color: white;
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2); margin-bottom: 30px;
         }
-        .main-card h2 {
-            margin: 0 0 10px 0;
-            font-size: 22px;
-        }
-        .main-card p {
-            margin: 0 0 20px 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
+        .main-card h2 { margin: 0 0 10px 0; font-size: 22px; }
+        .main-card p { margin: 0 0 20px 0; font-size: 14px; opacity: 0.9; }
         .btn-continue {
-            background-color: white;
-            color: #0072ff;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            transition: transform 0.2s;
+            background-color: white; color: #0072ff; border: none;
+            padding: 14px 20px; border-radius: 12px; font-size: 16px;
+            font-weight: bold; width: 100%; cursor: pointer; transition: transform 0.2s;
         }
-        .btn-continue:active {
-            transform: scale(0.96); /* Басқан кездегі анимация */
-        }
+        .btn-continue:active { transform: scale(0.96); }
 
-        /* Төменгі бөлік: geoAltyn геймификация */
         .fact-card {
             background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-left: 5px solid #28a745; /* Табиғи жасыл акцент */
+            border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #28a745;
         }
-        .fact-card h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .fact-card p {
-            margin: 0;
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--tg-theme-hint-color, #555555);
-        }
+        .fact-card h3 { margin: 0 0 10px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .fact-card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--tg-theme-hint-color, #555555); }
 
-        /* Браузерде тестілеу үшін Түнгі режимді (Dark Mode) қолдан қосу */
         @media (prefers-color-scheme: dark) {
             body { background-color: #181818; color: #ffffff; }
             .fact-card { background-color: #242424; }
@@ -121,15 +62,12 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="greeting">
             <h1 id="userName">Сәлем, Оқушы! 👋</h1>
             <p>ҰБТ-ға дайындық: 15%</p>
         </div>
-        <div class="progress-circle">
-            <div class="progress-inner">15%</div>
-        </div>
+        <div class="progress-circle"><div class="progress-inner">15%</div></div>
     </div>
 
     <div class="main-card">
@@ -144,22 +82,17 @@
     </div>
 
     <script>
-        // Бұл код қосымшаны Telegram ішінде толық экранға ашады
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Егер оқушы қосымшаны Telegram-нан ашса, оның атын автоматты түрде қою
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('userName').innerText = "Сәлем, " + tg.initDataUnsafe.user.first_name + "! 👋";
         }
 
-        // Батырма басылғанда не істейтінін көрсететін функция
         function openCourse() {
-            // Телефонда діріл (вибрация) беру эффектісі (тек телеграм ішінде жұмыс істейді)
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light'); 
-            }
-            alert("Бұл батырма басылған кезде келесі 'Курс модулі' (құлыптары бар сабақтар тізімі) ашылады!");
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); 
+            // КЕЛЕСІ БЕТКЕ (Курсқа) ӨТУ ЖОЛЫ:
+            window.location.href = "course.html"; 
         }
     </script>
 </body>
