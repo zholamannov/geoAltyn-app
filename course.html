@@ -8,97 +8,35 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #f4f6f9);
-            color: var(--tg-theme-text-color, #222222);
-            margin: 0;
-            padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: var(--tg-theme-bg-color, #f4f6f9); color: var(--tg-theme-text-color, #222222);
+            margin: 0; padding: 20px; transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Шапка: Блок атауы */
-        .header {
-            margin-bottom: 25px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-            color: #0072ff; /* Мұхит көк */
-        }
-        .header p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            color: var(--tg-theme-hint-color, #888888);
-        }
-
-        /* Сабақтар тізімі */
-        .lesson-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* Жалпы сабақ карточкасының стилі */
+        .header { margin-bottom: 25px; }
+        .header h1 { margin: 0; font-size: 22px; color: #0072ff; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #888888); }
+        .lesson-list { display: flex; flex-direction: column; gap: 15px; }
         .lesson-card {
             background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 16px; padding: 15px 20px; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
         }
-        .lesson-card:active {
-            transform: scale(0.98);
-        }
-
-        .lesson-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-        }
-        .lesson-info p {
-            margin: 0;
-            font-size: 13px;
-            color: var(--tg-theme-hint-color, #777777);
-        }
-
-        /* 1. АШЫҚ САБАҚ (Unlocked) */
-        .lesson-unlocked {
-            border-left: 5px solid #28a745; /* Жасыл акцент */
-        }
+        .lesson-card:active { transform: scale(0.98); }
+        .lesson-info h3 { margin: 0 0 5px 0; font-size: 16px; }
+        .lesson-info p { margin: 0; font-size: 13px; color: var(--tg-theme-hint-color, #777777); }
+        .lesson-unlocked { border-left: 5px solid #28a745; }
         .icon-play {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+            width: 40px; height: 40px; background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 18px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
         }
-
-        /* 2. ЖАБЫҚ САБАҚ (Locked) */
-        .lesson-locked {
-            opacity: 0.6; /* Сәл көмескіленіп тұрады */
-            border-left: 5px solid #cccccc;
-            background-color: var(--tg-theme-bg-color, #f9f9f9);
-        }
+        .lesson-locked { opacity: 0.6; border-left: 5px solid #cccccc; background-color: var(--tg-theme-bg-color, #f9f9f9); }
         .icon-lock {
-            width: 40px;
-            height: 40px;
-            background-color: #e0e0e0;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #666666;
-            font-size: 18px;
+            width: 40px; height: 40px; background-color: #e0e0e0; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; color: #666666; font-size: 18px;
         }
 
-        /* Түнгі режим (Dark Mode) */
         @media (prefers-color-scheme: dark) {
             body { background-color: #181818; color: #ffffff; }
             .header h1 { color: #00c6ff; }
@@ -110,18 +48,16 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <h1>1-блок: Физикалық география</h1>
         <p>Барлығы 5 сабақ • 1 сабақ қаралды</p>
     </div>
 
     <div class="lesson-list">
-        
         <div class="lesson-card lesson-unlocked" onclick="openVideo()">
             <div class="lesson-info">
                 <h3>1. Еуразия материгі</h3>
-                <p>Видеосабақ • 12 минут</p>
+                <p>Видеосабақ және Тест</p>
             </div>
             <div class="icon-play">▶</div>
         </div>
@@ -129,7 +65,7 @@
         <div class="lesson-card lesson-locked" onclick="showLockAlert()">
             <div class="lesson-info">
                 <h3>2. Литосфера және жер бедері</h3>
-                <p>Видеосабақ • 15 минут</p>
+                <p>Видеосабақ және Тест</p>
             </div>
             <div class="icon-lock">🔒</div>
         </div>
@@ -137,36 +73,24 @@
         <div class="lesson-card lesson-locked" onclick="showLockAlert()">
             <div class="lesson-info">
                 <h3>3. Дүниежүзілік мұхит</h3>
-                <p>Видеосабақ • 10 минут</p>
+                <p>Видеосабақ және Тест</p>
             </div>
             <div class="icon-lock">🔒</div>
         </div>
-
-        <div class="lesson-card lesson-locked" onclick="showLockAlert()">
-            <div class="lesson-info">
-                <h3>4. Биосфера</h3>
-                <p>Видеосабақ • 14 минут</p>
-            </div>
-            <div class="icon-lock">🔒</div>
-        </div>
-
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Ашық сабақты басқан кезде
         function openVideo() {
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            alert("Бұл батырманы басқанда Telegram-ның жабық базасынан қорғалған (protect_content) видео ойнатыла бастайды.");
+            // КЕЛЕСІ БЕТКЕ (Тестке) ӨТУ ЖОЛЫ:
+            window.location.href = "test.html";
         }
 
-        // Жабық сабақты басқан кезде
         function showLockAlert() {
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            
-            // Telegram-ның өз ішкі әдемі alert терезесін шақыру
             tg.showAlert("Бұл сабақ әзірге жабық 🔒\n\nАлдымен 'Еуразия материгі' тақырыбын толық көріп, тестінен кемінде 70% жинауыңыз қажет.");
         }
     </script>
