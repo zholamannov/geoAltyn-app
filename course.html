@@ -10,10 +10,12 @@
         .header { margin-bottom: 25px; }
         .header h1 { margin: 0; font-size: 22px; color: #0072ff; }
         .lesson-list { display: flex; flex-direction: column; gap: 15px; }
-        .lesson-card { background-color: var(--tg-theme-secondary-bg-color, #ffffff); border-radius: 16px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; border-left: 5px solid #28a745; }
+        .lesson-card { background-color: var(--tg-theme-secondary-bg-color, #ffffff); border-radius: 16px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; transition: transform 0.2s; }
+        .lesson-card:active { transform: scale(0.98); }
         .lesson-info h3 { margin: 0 0 5px 0; font-size: 16px; }
         .lesson-info p { margin: 0; font-size: 13px; color: var(--tg-theme-hint-color, #777777); }
         .icon-play { width: 40px; height: 40px; background: linear-gradient(135deg, #28a745, #20c997); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; }
+        .icon-lock { width: 40px; height: 40px; background-color: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #666666; font-size: 18px; }
         .loading { text-align: center; color: #888; font-size: 14px; margin-top: 50px; }
     </style>
 </head>
@@ -23,7 +25,7 @@
     </div>
 
     <div class="lesson-list" id="lessonList">
-        <div class="loading">Сабақтар жүктелуде... ⏳</div>
+        <div class="loading">Сабақтар мен нәтижелер тексерілуде... ⏳</div>
     </div>
 
     <script>
@@ -32,22 +34,50 @@
         tg.BackButton.show();
         tg.BackButton.onClick(function() { tg.BackButton.hide(); window.location.href = "index.html"; });
 
+        // Телеграмнан оқушының ID-ін алу
+        let userId = "";
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userId = tg.initDataUnsafe.user.id;
+        }
+
         const API_URL = "https://script.google.com/macros/s/AKfycbyLODP_It9XoMcW60crvOT0deaozO6ircA_CzPhK3w00OT5Ul0kKIFwqGKY2oOGYzvBrQ/exec";
 
-        fetch(API_URL + "?sheet=Lessons")
-            .then(response => response.json())
-            .then(data => {
-                const list = document.getElementById('lessonList');
-                list.innerHTML = ""; 
+        // 1. Сабақтарды әкелу, 2. Осы оқушының прогресін әкелу
+        Promise.all([
+            fetch(API_URL + "?sheet=Lessons").then(res => res.json()),
+            fetch(API_URL + "?sheet=Progress&user_id=" + userId).then(res => res.json())
+        ])
+        .then(([lessonsData, progressData]) => {
+            const list = document.getElementById('lessonList');
+            list.innerHTML = ""; 
 
-                if(data.length === 0 || data.error) {
-                    list.innerHTML = "<div class='loading'>Сабақтар әлі қосылмаған.</div>";
-                    return;
+            if(lessonsData.length === 0 || lessonsData.error) {
+                list.innerHTML = "<div class='loading'>Сабақтар табылмады.</div>";
+                return;
+            }
+
+            // Оқушы қандай сабақтардан сәтті (ИӘ) өткенін тізіп алу
+            let passedLessons = [];
+            if (!progressData.error) {
+                passedLessons = progressData.filter(p => p.is_passed === "ИӘ").map(p => parseInt(p.lesson_id));
+            }
+
+            lessonsData.forEach(lesson => {
+                let lessonId = parseInt(lesson.lesson_id);
+                let isUnlocked = false;
+
+                // ЛОГИКА: 1-сабақ әрқашан ашық. Ал қалғандары алдыңғы сабақты өтсе ғана ашылады.
+                if (lessonId === 1) {
+                    isUnlocked = true;
+                } else if (passedLessons.includes(lessonId - 1)) {
+                    isUnlocked = true;
                 }
 
-                data.forEach(lesson => {
-                    let card = document.createElement('div');
-                    card.className = "lesson-card";
+                let card = document.createElement('div');
+                card.className = "lesson-card";
+
+                if (isUnlocked) {
+                    card.style.borderLeft = "5px solid #28a745";
                     card.innerHTML = `
                         <div class="lesson-info">
                             <h3>${lesson.lesson_id}. ${lesson.title}</h3>
@@ -57,20 +87,34 @@
                     `;
                     card.onclick = () => {
                         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                        // Сабақ нөмірін, атын және ВИДЕО СІЛТЕМЕСІН сақтап аламыз
                         localStorage.setItem('currentLessonId', lesson.lesson_id);
                         localStorage.setItem('currentLessonTitle', lesson.title);
                         localStorage.setItem('currentVideoUrl', lesson.video_url); 
-                        
-                        // Енді тестке емес, видеоға өтеді!
                         window.location.href = "video.html"; 
                     };
-                    list.appendChild(card);
-                });
-            })
-            .catch(error => {
-                document.getElementById('lessonList').innerHTML = "<div class='loading'>Қате шықты. Интернетті тексеріңіз.</div>";
+                } else {
+                    card.style.borderLeft = "5px solid #cccccc";
+                    card.style.opacity = "0.6";
+                    card.style.backgroundColor = "var(--tg-theme-bg-color, #f9f9f9)";
+                    card.innerHTML = `
+                        <div class="lesson-info">
+                            <h3>${lesson.lesson_id}. ${lesson.title}</h3>
+                            <p>Алдыңғы сабақты аяқтаңыз</p>
+                        </div>
+                        <div class="icon-lock">🔒</div>
+                    `;
+                    card.onclick = () => {
+                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                        tg.showAlert("Бұл сабақ әзірге жабық 🔒\n\nАлдымен алдыңғы сабақтың тестінен кемінде 70% жинауыңыз қажет.");
+                    };
+                }
+
+                list.appendChild(card);
             });
+        })
+        .catch(error => {
+            document.getElementById('lessonList').innerHTML = "<div class='loading'>Қате шықты. Интернетті тексеріңіз.</div>";
+        });
     </script>
 </body>
 </html>
