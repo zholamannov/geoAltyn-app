@@ -32,15 +32,13 @@
         tg.BackButton.show();
         tg.BackButton.onClick(function() { tg.BackButton.hide(); window.location.href = "index.html"; });
 
-        // СІЗДІҢ API СІЛТЕМЕҢІЗ
         const API_URL = "https://script.google.com/macros/s/AKfycbyLODP_It9XoMcW60crvOT0deaozO6ircA_CzPhK3w00OT5Ul0kKIFwqGKY2oOGYzvBrQ/exec";
 
-        // Кестеден Сабақтарды (Lessons) тарту
         fetch(API_URL + "?sheet=Lessons")
             .then(response => response.json())
             .then(data => {
                 const list = document.getElementById('lessonList');
-                list.innerHTML = ""; // Загрузка текстті өшіру
+                list.innerHTML = ""; 
 
                 if(data.length === 0 || data.error) {
                     list.innerHTML = "<div class='loading'>Сабақтар әлі қосылмаған.</div>";
@@ -48,7 +46,6 @@
                 }
 
                 data.forEach(lesson => {
-                    // Әр сабақ үшін карточка жасау
                     let card = document.createElement('div');
                     card.className = "lesson-card";
                     card.innerHTML = `
@@ -58,13 +55,15 @@
                         </div>
                         <div class="icon-play">▶</div>
                     `;
-                    // Сабақты басқанда не болады?
                     card.onclick = () => {
                         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                        // Қай сабақ таңдалғанын телефон жадына сақтап қоямыз
+                        // Сабақ нөмірін, атын және ВИДЕО СІЛТЕМЕСІН сақтап аламыз
                         localStorage.setItem('currentLessonId', lesson.lesson_id);
                         localStorage.setItem('currentLessonTitle', lesson.title);
-                        window.location.href = "test.html";
+                        localStorage.setItem('currentVideoUrl', lesson.video_url); 
+                        
+                        // Енді тестке емес, видеоға өтеді!
+                        window.location.href = "video.html"; 
                     };
                     list.appendChild(card);
                 });
