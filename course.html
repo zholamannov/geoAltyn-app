@@ -6,93 +6,72 @@
     <title>geoAltyn - Курс модулі</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #f4f6f9); color: var(--tg-theme-text-color, #222222);
-            margin: 0; padding: 20px; transition: background-color 0.3s, color 0.3s;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--tg-theme-bg-color, #f4f6f9); color: var(--tg-theme-text-color, #222222); margin: 0; padding: 20px; }
         .header { margin-bottom: 25px; }
         .header h1 { margin: 0; font-size: 22px; color: #0072ff; }
-        .header p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #888888); }
         .lesson-list { display: flex; flex-direction: column; gap: 15px; }
-        .lesson-card {
-            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px; padding: 15px 20px; display: flex; align-items: center;
-            justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .lesson-card:active { transform: scale(0.98); }
+        .lesson-card { background-color: var(--tg-theme-secondary-bg-color, #ffffff); border-radius: 16px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; border-left: 5px solid #28a745; }
         .lesson-info h3 { margin: 0 0 5px 0; font-size: 16px; }
         .lesson-info p { margin: 0; font-size: 13px; color: var(--tg-theme-hint-color, #777777); }
-        .lesson-unlocked { border-left: 5px solid #28a745; }
-        .icon-play {
-            width: 40px; height: 40px; background: linear-gradient(135deg, #28a745, #20c997);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 18px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
-        }
-        .lesson-locked { opacity: 0.6; border-left: 5px solid #cccccc; background-color: var(--tg-theme-bg-color, #f9f9f9); }
-        .icon-lock {
-            width: 40px; height: 40px; background-color: #e0e0e0; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; color: #666666; font-size: 18px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body { background-color: #181818; color: #ffffff; }
-            .header h1 { color: #00c6ff; }
-            .lesson-card { background-color: #242424; }
-            .lesson-info p { color: #aaaaaa; }
-            .lesson-locked { background-color: #1e1e1e; border-left: 5px solid #444444; opacity: 0.5; }
-            .icon-lock { background-color: #333333; color: #888888; }
-        }
+        .icon-play { width: 40px; height: 40px; background: linear-gradient(135deg, #28a745, #20c997); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; }
+        .loading { text-align: center; color: #888; font-size: 14px; margin-top: 50px; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>1-блок: Физикалық география</h1>
-        <p>Барлығы 5 сабақ • 1 сабақ қаралды</p>
+        <h1>Курс сабақтары</h1>
     </div>
 
-    <div class="lesson-list">
-        <div class="lesson-card lesson-unlocked" onclick="openVideo()">
-            <div class="lesson-info">
-                <h3>1. Еуразия материгі</h3>
-                <p>Видеосабақ және Тест</p>
-            </div>
-            <div class="icon-play">▶</div>
-        </div>
-
-        <div class="lesson-card lesson-locked" onclick="showLockAlert()">
-            <div class="lesson-info">
-                <h3>2. Литосфера және жер бедері</h3>
-                <p>Видеосабақ және Тест</p>
-            </div>
-            <div class="icon-lock">🔒</div>
-        </div>
-
-        <div class="lesson-card lesson-locked" onclick="showLockAlert()">
-            <div class="lesson-info">
-                <h3>3. Дүниежүзілік мұхит</h3>
-                <p>Видеосабақ және Тест</p>
-            </div>
-            <div class="icon-lock">🔒</div>
-        </div>
+    <div class="lesson-list" id="lessonList">
+        <div class="loading">Сабақтар жүктелуде... ⏳</div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(function() { tg.BackButton.hide(); window.location.href = "index.html"; });
 
-        function openVideo() {
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            // КЕЛЕСІ БЕТКЕ (Тестке) ӨТУ ЖОЛЫ:
-            window.location.href = "test.html";
-        }
+        // СІЗДІҢ API СІЛТЕМЕҢІЗ
+        const API_URL = "https://script.google.com/macros/s/AKfycbyLODP_It9XoMcW60crvOT0deaozO6ircA_CzPhK3w00OT5Ul0kKIFwqGKY2oOGYzvBrQ/exec";
 
-        function showLockAlert() {
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            tg.showAlert("Бұл сабақ әзірге жабық 🔒\n\nАлдымен 'Еуразия материгі' тақырыбын толық көріп, тестінен кемінде 70% жинауыңыз қажет.");
-        }
+        // Кестеден Сабақтарды (Lessons) тарту
+        fetch(API_URL + "?sheet=Lessons")
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('lessonList');
+                list.innerHTML = ""; // Загрузка текстті өшіру
+
+                if(data.length === 0 || data.error) {
+                    list.innerHTML = "<div class='loading'>Сабақтар әлі қосылмаған.</div>";
+                    return;
+                }
+
+                data.forEach(lesson => {
+                    // Әр сабақ үшін карточка жасау
+                    let card = document.createElement('div');
+                    card.className = "lesson-card";
+                    card.innerHTML = `
+                        <div class="lesson-info">
+                            <h3>${lesson.lesson_id}. ${lesson.title}</h3>
+                            <p>Видео және Тест</p>
+                        </div>
+                        <div class="icon-play">▶</div>
+                    `;
+                    // Сабақты басқанда не болады?
+                    card.onclick = () => {
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                        // Қай сабақ таңдалғанын телефон жадына сақтап қоямыз
+                        localStorage.setItem('currentLessonId', lesson.lesson_id);
+                        localStorage.setItem('currentLessonTitle', lesson.title);
+                        window.location.href = "test.html";
+                    };
+                    list.appendChild(card);
+                });
+            })
+            .catch(error => {
+                document.getElementById('lessonList').innerHTML = "<div class='loading'>Қате шықты. Интернетті тексеріңіз.</div>";
+            });
     </script>
 </body>
 </html>
