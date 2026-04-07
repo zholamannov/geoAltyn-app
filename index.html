@@ -6,94 +6,138 @@
     <title>geoAltyn - Басты бет</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #f4f6f9);
-            color: var(--tg-theme-text-color, #222222);
-            margin: 0;
-            padding: 20px;
-            transition: background-color 0.3s, color 0.3s;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--tg-theme-bg-color, #f4f6f9); color: var(--tg-theme-text-color, #222222); margin: 0; padding: 20px; transition: background-color 0.3s, color 0.3s; }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .greeting h1 { margin: 0; font-size: 24px; }
         .greeting p { margin: 5px 0 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #888888); }
-        .progress-circle {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: conic-gradient(#0072ff 15%, #e0e0e0 0); 
-            display: flex; justify-content: center; align-items: center;
-            font-weight: bold; font-size: 14px;
-        }
-        .progress-inner {
-            width: 50px; height: 50px; border-radius: 50%;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            display: flex; justify-content: center; align-items: center;
-        }
+        .progress-circle { width: 60px; height: 60px; border-radius: 50%; background: conic-gradient(#e0e0e0 100%, #e0e0e0 0); display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; transition: background 0.5s; }
+        .progress-inner { width: 50px; height: 50px; border-radius: 50%; background-color: var(--tg-theme-bg-color, #ffffff); display: flex; justify-content: center; align-items: center; }
 
-        .main-card {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            border-radius: 20px; padding: 25px; color: white;
-            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2); margin-bottom: 30px;
-        }
+        .main-card { background: linear-gradient(135deg, #00c6ff, #0072ff); border-radius: 20px; padding: 25px; color: white; box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2); margin-bottom: 30px; }
         .main-card h2 { margin: 0 0 10px 0; font-size: 22px; }
-        .main-card p { margin: 0 0 20px 0; font-size: 14px; opacity: 0.9; }
-        .btn-continue {
-            background-color: white; color: #0072ff; border: none;
-            padding: 14px 20px; border-radius: 12px; font-size: 16px;
-            font-weight: bold; width: 100%; cursor: pointer; transition: transform 0.2s;
-        }
+        .main-card p { margin: 0 0 20px 0; font-size: 14px; opacity: 0.9; min-height: 20px;}
+        .btn-continue { background-color: white; color: #0072ff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; transition: transform 0.2s; }
         .btn-continue:active { transform: scale(0.96); }
 
-        .fact-card {
-            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-left: 5px solid #28a745;
-        }
-        .fact-card h3 { margin: 0 0 10px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-        .fact-card p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--tg-theme-hint-color, #555555); }
+        .fact-card { background-color: var(--tg-theme-secondary-bg-color, #ffffff); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid #ffb800; }
+        .fact-card h3 { margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center; gap: 8px; color: #ffb800;}
+        .fact-card p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--tg-theme-text-color, #222222); }
+        .fact-question { font-weight: bold; margin-bottom: 10px; }
+        .fact-answer { display: inline-block; background-color: rgba(40, 167, 69, 0.1); color: #28a745; padding: 5px 10px; border-radius: 8px; font-weight: bold; border: 1px solid rgba(40, 167, 69, 0.3); }
 
         @media (prefers-color-scheme: dark) {
             body { background-color: #181818; color: #ffffff; }
             .fact-card { background-color: #242424; }
-            .fact-card p { color: #bbbbbb; }
             .progress-inner { background-color: #181818; color: #ffffff; }
-            .progress-circle { background: conic-gradient(#00c6ff 15%, #333333 0); }
+            .progress-circle { background: conic-gradient(#333333 100%, #333333 0); }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="greeting">
-            <h1 id="userName">Сәлем, Оқушы! 👋</h1>
-            <p>ҰБТ-ға дайындық: 15%</p>
+            <h1 id="userName">Сәлем! 👋</h1>
+            <p id="progressText">Курс жүктелуде... ⏳</p>
         </div>
-        <div class="progress-circle"><div class="progress-inner">15%</div></div>
+        <div class="progress-circle" id="progressCircle"><div class="progress-inner" id="progressInner">0%</div></div>
     </div>
 
     <div class="main-card">
         <h2>Оқуды жалғастыру</h2>
-        <p>Келесі сабақ: "Еуразия материгі"</p>
+        <p id="nextLessonTitle">Ақпарат тексерілуде...</p>
         <button class="btn-continue" onclick="openCourse()">▶ Сабаққа өту</button>
     </div>
 
     <div class="fact-card">
-        <h3>🌍 geoAltyn: Күннің фактісі</h3>
-        <p>Білдіңіз бе? Тынық мұхиты Жер бетіндегі барлық құрлықты қосқандағы аумақтан да үлкенірек. Оның ауданы шамамен 165 миллион шаршы шақырымды құрайды!</p>
+        <h3>⚡ geoAltyn: Есте сақтаңыз!</h3>
+        <p id="factText">Қызықты мәлімет іздестірілуде... ⏳</p>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
+        tg.BackButton.hide();
 
+        let userId = "";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('userName').innerText = "Сәлем, " + tg.initDataUnsafe.user.first_name + "! 👋";
+            userId = tg.initDataUnsafe.user.id;
+            let firstName = tg.initDataUnsafe.user.first_name || "Оқушы";
+            document.getElementById('userName').innerText = "Сәлем, " + firstName + "! 👋";
         }
 
         function openCourse() {
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); 
-            // КЕЛЕСІ БЕТКЕ (Курсқа) ӨТУ ЖОЛЫ:
             window.location.href = "course.html"; 
         }
+
+        const API_URL = "https://script.google.com/macros/s/AKfycbyLODP_It9XoMcW60crvOT0deaozO6ircA_CzPhK3w00OT5Ul0kKIFwqGKY2oOGYzvBrQ/exec";
+
+        // ҮШ ПАРАҚТЫ БІРДЕН ОҚУ: Lessons, Progress ЖӘНЕ Questions
+        Promise.all([
+            fetch(API_URL + "?sheet=Lessons").then(res => res.json()),
+            fetch(API_URL + "?sheet=Progress&user_id=" + userId).then(res => res.json()),
+            fetch(API_URL + "?sheet=Questions").then(res => res.json())
+        ])
+        .then(([lessonsData, progressData, questionsData]) => {
+            
+            // --- 1. ПАЙЫЗ БЕН САБАҚТЫ ЕСЕПТЕУ (Бұрынғы логика) ---
+            if (!lessonsData.error) {
+                let totalLessons = lessonsData.length;
+                let passedLessons = [];
+                if (!progressData.error) {
+                    passedLessons = progressData.filter(p => p.is_passed === "ИӘ").map(p => parseInt(p.lesson_id));
+                }
+                let passedCount = passedLessons.length;
+                let percent = totalLessons > 0 ? Math.round((passedCount / totalLessons) * 100) : 0;
+
+                document.getElementById('progressText').innerText = "ҰБТ-ға дайындық: " + percent + "%";
+                document.getElementById('progressInner').innerText = percent + "%";
+                let circleColor = (tg.colorScheme === 'dark') ? '#333333' : '#e0e0e0';
+                document.getElementById('progressCircle').style.background = `conic-gradient(#0072ff ${percent}%, ${circleColor} 0)`;
+
+                let nextLesson = null;
+                for (let i = 0; i < lessonsData.length; i++) {
+                    let lessonId = parseInt(lessonsData[i].lesson_id);
+                    if (!passedLessons.includes(lessonId)) {
+                        nextLesson = lessonsData[i];
+                        break; 
+                    }
+                }
+
+                if (nextLesson) {
+                    document.getElementById('nextLessonTitle').innerText = "Келесі: " + nextLesson.lesson_id + ". " + nextLesson.title;
+                } else {
+                    document.getElementById('nextLessonTitle').innerText = "Барлық сабақтар аяқталды! 🎉";
+                }
+            }
+
+            // --- 2. ЖАҢА: РАНДОМДЫ ФАКТ (СҰРАҚ) ШЫҒАРУ ---
+            if (!questionsData.error && questionsData.length > 0) {
+                // Кездейсоқ санды таңдау
+                let randomIndex = Math.floor(Math.random() * questionsData.length);
+                let randomQuestion = questionsData[randomIndex];
+                
+                // Дұрыс жауапты табу (option_0, option_1...)
+                let correctIndex = randomQuestion.correct_option;
+                let correctAnswer = randomQuestion["option_" + correctIndex];
+
+                // Экранға әдемілеп шығару
+                document.getElementById('factText').innerHTML = `
+                    <div class="fact-question">🤔 ${randomQuestion.question_text}</div>
+                    <div class="fact-answer">✅ ${correctAnswer}</div>
+                `;
+            } else {
+                document.getElementById('factText').innerText = "Базаға әлі сұрақтар қосылмаған.";
+            }
+
+        })
+        .catch(error => {
+            console.error("Қате:", error);
+            document.getElementById('progressText').innerText = "Интернетті тексеріңіз";
+            document.getElementById('nextLessonTitle').innerText = "Байланыс жоқ...";
+            document.getElementById('factText').innerText = "Мәліметті жүктеу мүмкін болмады.";
+        });
     </script>
 </body>
 </html>
