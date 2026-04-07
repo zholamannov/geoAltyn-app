@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>geoAltyn - Видеосабақ</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--tg-theme-bg-color, #f4f6f9); color: var(--tg-theme-text-color, #222222); margin: 0; padding: 20px; }
+        
+        .header { margin-bottom: 20px; }
+        .header p { margin: 0 0 5px 0; font-size: 14px; color: #0072ff; font-weight: bold; }
+        .header h1 { margin: 0; font-size: 22px; line-height: 1.3; }
+        
+        /* Видеоға арналған қауіпсіз контейнер */
+        .video-container { 
+            position: relative; 
+            padding-bottom: 56.25%; /* 16:9 пропорциясы */
+            height: 0; 
+            overflow: hidden; 
+            border-radius: 16px; 
+            background: #000; 
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .video-container iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            border: 0; 
+        }
+
+        .btn-main { background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-main:active { transform: scale(0.98); }
+        
+        .info-card { background-color: var(--tg-theme-secondary-bg-color, #ffffff); border-radius: 12px; padding: 15px; margin-bottom: 20px; font-size: 14px; color: var(--tg-theme-hint-color, #666); border-left: 4px solid #ffb800; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p id="lessonSubtitle">Сабақ жүктелуде...</p>
+        <h1 id="lessonTitle">...</h1>
+    </div>
+
+    <div class="video-container" id="videoContainer">
+        </div>
+
+    <div class="info-card">
+        💡 Видеоны толық көріп шыққаннан кейін ғана тестке өтуге кеңес береміз. Тесттен өту шегі: 70%.
+    </div>
+
+    <button class="btn-main" onclick="goToTest()">📝 Тестке өту</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(function() { window.location.href = "course.html"; });
+
+        // Телефон жадынан сабақ мәліметтерін оқу
+        const currentLessonId = localStorage.getItem('currentLessonId') || "1";
+        const currentLessonTitle = localStorage.getItem('currentLessonTitle') || "Тақырып";
+        let currentVideoUrl = localStorage.getItem('currentVideoUrl') || "";
+
+        // Экранға шығару
+        document.getElementById('lessonSubtitle').innerText = "Сабақ " + currentLessonId;
+        document.getElementById('lessonTitle').innerText = currentLessonTitle;
+
+        // Егер YouTube сілтемесі болса, оны автоматты түрде "embed" (плэер) форматына ауыстырамыз
+        if (currentVideoUrl.includes("youtube.com/watch?v=")) {
+            currentVideoUrl = currentVideoUrl.replace("youtube.com/watch?v=", "youtube.com/embed/");
+            // Қосымша параметрлерді (мысалы &t=) алып тастау үшін:
+            if(currentVideoUrl.includes("&")) currentVideoUrl = currentVideoUrl.split("&")[0];
+        } else if (currentVideoUrl.includes("youtu.be/")) {
+            currentVideoUrl = currentVideoUrl.replace("youtu.be/", "youtube.com/embed/");
+        }
+
+        // Iframe жасап, контейнерге салу
+        if (currentVideoUrl) {
+            document.getElementById('videoContainer').innerHTML = `<iframe src="${currentVideoUrl}" allowfullscreen></iframe>`;
+        } else {
+            document.getElementById('videoContainer').innerHTML = `<div style="color:white; text-align:center; padding-top: 25%;">Видео жүктелмеген</div>`;
+        }
+
+        function goToTest() {
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            window.location.href = "test.html";
+        }
+    </script>
+</body>
+</html>
